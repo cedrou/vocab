@@ -143,7 +143,7 @@ class App extends Component {
                         let item = this.state.log[key];
 
                         return (
-                            <tbody className={item.success ? "log-success" : "log-error"}>
+                            <tbody className={item.success ? "log-success" : item.trials.length > this.MaxTrials ? "log-error" : ""}>
                             <tr>
                                 <td>{i+1}</td>
                                 <td>{key}</td>
@@ -163,10 +163,7 @@ class App extends Component {
     render() {
         return (
             <div className="App">
-                <header className="App-header">
-                    <h1 className="App-title">Test de vocabulaire franco-russe</h1>
-                </header>
-
+ 
                 <div className="App-quizz">
                     <table><tbody>
                         <tr>
