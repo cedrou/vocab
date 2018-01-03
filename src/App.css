@@ -54,6 +54,16 @@
   color: #666;
 }
 
+.answer-success {
+  background-color: #f2fcf2;
+  border: 1px solid #83ec83;
+}
+
+.answer-error {
+  background-color: #fcf2f2;
+  border: 1px solid #ec8383;
+}
+
 .App-log {
   border: 1px solid #83beec;
   border-top: 20px solid transparent;
@@ -62,6 +72,48 @@
   height: auto;
   padding: 10px;
 }
+
+.App-log table {
+  background-color: #eee;
+  width:100%;
+}
+.App-log table th.index {
+  width:50px;
+}
+.App-log table th.word {
+  width:100px;
+}
+.App-log table th.trials {
+  
+}
+
+.horizontal-stack {
+    margin: 0;
+    padding: 0;
+}
+
+.horizontal-stack li {
+  display: block;
+  width: 50px;
+  float: left;
+}
+
+.striked {
+  text-decoration: line-through;
+}
+.bolded {
+  font-weight: bold; 
+}
+
+.log-success {
+  outline: 1px solid #83ec83; 
+  background-color: #f2fcf2;
+}
+.log-error {
+  outline: 1px solid #f00;
+  background-color: #fcf2f2;
+}
+
 
 .App-scores {
   margin: 0 auto;
