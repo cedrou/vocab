@@ -10,9 +10,17 @@ import vocab from './assets/vocab.json'
 class App extends Component {
 
     kbd = null;
+    
+    shuffle(a) {
+        for (let i = a.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [a[i], a[j]] = [a[j], a[i]];
+        }
+        return a;
+    }
 
     state = {
-        list: vocab,
+        list: this.shuffle(vocab),
         current: ["",""],
         input: "",
         log: {},
@@ -68,7 +76,9 @@ class App extends Component {
         state.current = state.list.shift();
         state.input = "";
  
-        state.log[state.current[0]] = state.log[state.current[0]] || { trials:[], success: false}
+        if (state.current) {
+            state.log[state.current[0]] = state.log[state.current[0]] || { trials:[], success: false}
+        }
 
         this.setState(state); 
     }
@@ -78,7 +88,9 @@ class App extends Component {
         state.current = state.list.shift();
         state.input = "";
 
-        state.log[state.current[0]] = state.log[state.current[0]] || { trials:[], success: false}
+        if (state.current) {
+            state.log[state.current[0]] = state.log[state.current[0]] || { trials:[], success: false}
+        }
 
         this.setState(state); 
     }
@@ -135,8 +147,10 @@ class App extends Component {
                     <table><tbody>
                         <tr>
                             <td>
-                            <img src={frflag} className="App-flag" alt="frflag" />
-                                <div className="App-question">{this.state.current[0]}</div>
+                                <img src={frflag} className="App-flag" alt="frflag" />
+                                <div className="App-question">
+                                    <div>{this.state.current ? this.state.current[0] : ""}</div>
+                                </div>
                             </td>
                             <td>
                                 <img src={ruflag} className="App-flag" alt="ruflag"/>
