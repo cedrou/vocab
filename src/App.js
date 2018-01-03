@@ -9,9 +9,10 @@ import vocab from './assets/vocab.json'
 
 class App extends Component {
 
-    kbd = null;
-    
-    shuffle(a) {
+    MaxTrials = 3;
+
+    shuffle(b) {
+        let a = b;
         for (let i = a.length - 1; i > 0; i--) {
             const j = Math.floor(Math.random() * (i + 1));
             [a[i], a[j]] = [a[j], a[i]];
@@ -34,7 +35,11 @@ class App extends Component {
 
 
     handleKeyboardClick = (value) => {
+        if (this.state.isError || this.state.isSuccess) return;
+
         if (value === "SUBMIT") {
+
+            const current = this.state.current[0];
 
             if (this.state.input === "") return;
 
@@ -42,21 +47,40 @@ class App extends Component {
                 let {success, log} = this.state;
 
                 success += 1;
-                log[this.state.current[0]].trials.push(this.state.input);
-                log[this.state.current[0]].success = true;
+                log[current].trials.push(this.state.input);
+                log[current].success = true;
                 
                 this.setState({success: success, log: log, isSuccess: true, isError: false});
-                this.next();
-                setTimeout(() => this.setState({isSuccess: false}), 2000);
+                setTimeout(() => {
+                    this.setState({isSuccess: false});
+                    this.next();
+                }, 2000);
             }
             else {
                 let {error, log} = this.state;
 
                 error += 1;
-                log[this.state.current[0]].trials.push(this.state.input);
+                log[current].trials.push(this.state.input);
 
-                this.setState({error: error, log: log, isError: true, isSuccess: false});
-                setTimeout(() => this.setState({isError: false}), 2000);
+                let failed = (log[current].trials.length === this.MaxTrials)
+
+                if (failed) {
+                    log[current].trials.push(this.state.current[1]);
+
+                    this.setState({error: error, log: log, isError: true, isSuccess: false, input: this.state.current[1]});
+
+                    setTimeout(() => { 
+                        this.setState({isError: false})
+                        this.next()
+                    }, 2000);
+                }
+                else {
+                    this.setState({error: error, log: log, isError: true, isSuccess: false});
+    
+                    setTimeout(() => { 
+                        this.setState({isError: false})
+                    }, 2000);
+                }
             }
         }
         else if (value === "SKIP") {
@@ -125,7 +149,7 @@ class App extends Component {
                                 <td>{key}</td>
                                 <td><ul className="horizontal-stack">
                                 {item.trials.map ( (trial,index) => {
-                                    let className = (item.success && index === item.trials.length - 1) ? "bolded" : "striked";
+                                    let className = ((item.success || item.trials.length > this.MaxTrials)  && index === item.trials.length - 1)  ? "bolded" : "striked";
                                     return <li className={className}>{trial}</li>
                                 })}
                                 </ul></td>
