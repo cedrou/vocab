@@ -1,6 +1,6 @@
 .keyboard {
 	width: 100%;
-	max-width: 57em;
+	max-width: 45em;
 	margin: 0 auto;
 	background: #dadada;
 	box-shadow: 0 2px 12px 0 rgba(0, 0, 0, .5);
@@ -21,7 +21,7 @@
 	justify-content: space-around;
 	align-items: center;
 	flex-basis: 5.5em;
-	height: 3.3333333333em;
+	height: 2.5em;
 	margin: 5px;
 	border-radius: 4px;
 	background-color: #f5f5f5;
