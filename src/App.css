@@ -103,6 +103,10 @@
   font-weight: bold; 
 }
 
+.log-uncompleted {
+  outline: 1px solid #ddd; 
+  background-color: #fff;
+}
 .log-success {
   outline: 1px solid #83ec83; 
   background-color: #f2fcf2;

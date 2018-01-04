@@ -143,7 +143,7 @@ class App extends Component {
                         let item = this.state.log[key];
 
                         return (
-                            <tbody className={item.success ? "log-success" : item.trials.length > this.MaxTrials ? "log-error" : ""}>
+                            <tbody className={item.success ? "log-success" : item.trials.length > this.MaxTrials ? "log-error" : "log-uncompleted"}>
                             <tr>
                                 <td>{i+1}</td>
                                 <td>{key}</td>
