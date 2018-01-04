@@ -162,11 +162,11 @@ class App extends Component {
         // check each word
         let p = Promise.resolve();
 
-        if (false) {
+        if (true) {
             vocab.forEach( ([fr,ru]) => {
                 p = p.then( () => 
                     this.translateAsync("fr","ru",fr).then( toru => { 
-                        (ru === toru) ? Promise.resolve() : this.translateAsync("ru","fr",fr).then( tofr => {
+                        (ru === toru) ? Promise.resolve() : this.translateAsync("ru","fr",ru).then( tofr => {
                             if (fr !== tofr) {
                                 console.log(`${fr} - ${ru} - ${toru} - ${tofr}`);
                             }
