@@ -11,17 +11,36 @@ class App extends Component {
 
     MaxTrials = 3;
 
-    shuffle(b) {
-        let a = b;
+    translateAsync(sourceLang,targetLang,query) {
+        return new Promise( (resolve, reject) => {
+
+            let url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=${sourceLang}&tl=${targetLang}&dt=t&q=${encodeURI(query)}`;
+
+            var xhttp = new XMLHttpRequest();
+            xhttp.open("GET", url, true);
+            
+            xhttp.onload = function () { 
+                if (this.status !== 200) {
+                    reject(this.response);
+                } 
+                else {
+                    var response = JSON.parse(xhttp.responseText);
+                    resolve (response[0][0][0]);
+                }
+            }
+            xhttp.send();
+        });
+    }
+
+    shuffle(a) {
         for (let i = a.length - 1; i > 0; i--) {
             const j = Math.floor(Math.random() * (i + 1));
             [a[i], a[j]] = [a[j], a[i]];
         }
-        return a;
     }
 
     state = {
-        list: this.shuffle(vocab),
+        list: [],
         current: ["",""],
         input: "",
         log: {},
@@ -119,8 +138,46 @@ class App extends Component {
         this.setState(state); 
     }
 
-    componentDidMount() {
+    clear () {
+        let list = [].concat(vocab);
+        this.shuffle(list);
+
+        this.setState({
+            list: list,
+            current: ["",""],
+            input: "",
+            log: {},
+    
+            error: 0,
+            success: 0,
+    
+            isSuccess: false,
+            isError: false,
+        });
+    
         this.next();
+    }
+
+    componentDidMount() {
+        // check each word
+        let p = Promise.resolve();
+
+        if (false) {
+            vocab.forEach( ([fr,ru]) => {
+                p = p.then( () => 
+                    this.translateAsync("fr","ru",fr).then( toru => { 
+                        (ru === toru) ? Promise.resolve() : this.translateAsync("ru","fr",fr).then( tofr => {
+                            if (fr !== tofr) {
+                                console.log(`${fr} - ${ru} - ${toru} - ${tofr}`);
+                            }
+                            return Promise.resolve(); 
+                        });
+                    })
+                );
+            });
+        }
+
+        p = p.then( () => this.clear());
     }
 
     getAnswerClass() {
@@ -130,36 +187,6 @@ class App extends Component {
         return className;
     }
 
-    renderLog() {
-        return (
-            <div className="App-log">
-                <table>
-                    <thead>
-                        <th className="index" >#</th>
-                        <th className="word" >Mot</th>
-                        <th className="trials" >Essais</th>
-                    </thead>
-                    {Object.keys(this.state.log).map( (key,i) => {
-                        let item = this.state.log[key];
-
-                        return (
-                            <tbody className={item.success ? "log-success" : item.trials.length > this.MaxTrials ? "log-error" : "log-uncompleted"}>
-                            <tr>
-                                <td>{i+1}</td>
-                                <td>{key}</td>
-                                <td><ul className="horizontal-stack">
-                                {item.trials.map ( (trial,index) => {
-                                    let className = ((item.success || item.trials.length > this.MaxTrials)  && index === item.trials.length - 1)  ? "bolded" : "striked";
-                                    return <li className={className}>{trial}</li>
-                                })}
-                                </ul></td>
-                            </tr></tbody>
-                        );
-                    })}
-                </table>
-            </div>
-        )
-    }
     render() {
         return (
             <div className="App">
@@ -183,7 +210,32 @@ class App extends Component {
  
                 <Keyboard onClick={this.handleKeyboardClick} />
 
-                {this.renderLog()}
+                <div className="App-log">
+                    <table>
+                        <thead><tr>
+                            <th className="index" >#</th>
+                            <th className="word" >Mot</th>
+                            <th className="trials" >Essais</th>
+                        </tr></thead>
+
+                        {Object.keys(this.state.log).map( (key,rowindex) => {
+                            let item = this.state.log[key];
+
+                            return (
+                                <tbody key={`log-row-${rowindex}`} className={item.success ? "log-success" : item.trials.length > this.MaxTrials ? "log-error" : "log-uncompleted"}><tr>
+                                    <td>{rowindex+1}</td>
+                                    <td>{key}</td>
+                                    <td><ul className="horizontal-stack">
+                                    {item.trials.map ( (trial,trialindex) => {
+                                        let className = ((item.success || item.trials.length > this.MaxTrials)  && trialindex === item.trials.length - 1)  ? "bolded" : "striked";
+                                        return <li key={`log-trial-${trialindex}`} className={className}>{trial}</li>
+                                    })}
+                                    </ul></td>
+                                </tr></tbody>
+                            );
+                        })}
+                    </table>
+                </div>
             </div>
         );
     }

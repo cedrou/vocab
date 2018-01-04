@@ -60,13 +60,13 @@ class Keyboard extends React.Component {
         return layout.map ( (row,i) =>
             <div className="keyboard-row" key={`row-${i}`}>
 
-                {row.map(k => {
+                {row.map( (k,index) => {
                     
                     if (typeof(k) === 'string') {
                         k = {id: k, value: k}
                     }
                     
-                    return <KeyboardButton key={k.id} id={k.id} value={k.value} className={k.class} onClick={this.handleKeyClick} />
+                    return <KeyboardButton key={k.id + index} id={k.id} value={k.value} className={k.class} onClick={this.handleKeyClick} />
                     
                 })}
 
