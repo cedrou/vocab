@@ -72,7 +72,7 @@ class App extends Component {
                 this.setState({success: success, log: log, isSuccess: true, isError: false});
                 setTimeout(() => {
                     this.setState({isSuccess: false});
-                    this.next();
+                    this.nextWord();
                 }, 2000);
             }
             else {
@@ -90,7 +90,7 @@ class App extends Component {
 
                     setTimeout(() => { 
                         this.setState({isError: false})
-                        this.next()
+                        this.nextWord()
                     }, 2000);
                 }
                 else {
@@ -103,7 +103,7 @@ class App extends Component {
             }
         }
         else if (value === "SKIP") {
-            this.skip();
+            this.skipWord();
         }
         else if (value === "BACKSPACE") {
             this.setState({input: this.state.input.substring(0,this.state.input.length-1)});
@@ -113,7 +113,7 @@ class App extends Component {
         }
     }
 
-    skip () {
+    skipWord () {
         let state = this.state;
         state.list.push(state.current);
         state.current = state.list.shift();
@@ -125,9 +125,9 @@ class App extends Component {
 
         this.setState(state); 
     }
-
-    next () {
-        let state = this.state;
+    nextWord (state) {
+        
+        if (!state) state = this.state;
         state.current = state.list.shift();
         state.input = "";
 
@@ -138,12 +138,15 @@ class App extends Component {
         this.setState(state); 
     }
 
-    clear () {
-        let list = [].concat(vocab);
+    changeLesson(lesson) {
+        let list = [].concat(vocab[lesson]);
         this.shuffle(list);
 
-        this.setState({
+        let state = {
             list: list,
+
+            lesson: lesson,
+
             current: ["",""],
             input: "",
             log: {},
@@ -153,31 +156,43 @@ class App extends Component {
     
             isSuccess: false,
             isError: false,
-        });
+        };
     
-        this.next();
+        this.nextWord(state);        
+    }
+    nextLesson () {
+        this.changeLesson(Math.min(vocab.length - 1, this.state.lesson + 1));
+    }
+    prevLesson() {
+        this.changeLesson(Math.max(0, this.state.lesson - 1));
     }
 
-    componentDidMount() {
-        // check each word
+    clear () {
+        this.changeLesson(vocab.length - 1);
+    }
+
+    checkVocabularyAsync(doCheck) {
         let p = Promise.resolve();
 
-        if (true) {
-            vocab.forEach( ([fr,ru]) => {
+        if (doCheck) {
+            vocab.forEach( (lesson) => { lesson.forEach( ([fr,ru]) => {
                 p = p.then( () => 
                     this.translateAsync("fr","ru",fr).then( toru => { 
-                        (ru === toru) ? Promise.resolve() : this.translateAsync("ru","fr",ru).then( tofr => {
-                            if (fr !== tofr) {
+                        (ru.toLowerCase() === toru.toLowerCase()) ? Promise.resolve() : this.translateAsync("ru","fr",ru).then( tofr => {
+                            if (fr.toLowerCase() !== tofr.toLowerCase()) {
                                 console.log(`${fr} - ${ru} - ${toru} - ${tofr}`);
                             }
                             return Promise.resolve(); 
                         });
                     })
                 );
-            });
+            }) });
         }
 
-        p = p.then( () => this.clear());
+        return p;
+    }
+    componentDidMount() {
+        this.checkVocabularyAsync(false).then( () => this.clear());
     }
 
     getAnswerClass() {
@@ -191,18 +206,27 @@ class App extends Component {
         return (
             <div className="App">
  
+                <div className="Lesson-selector">
+                    <h1>
+                        <button className="nav" onClick={(e) => this.prevLesson()} disabled={this.state.lesson === 0}>&#8249;</button>
+                        Leçon {this.state.lesson + 1} / {vocab.length}
+                        <button className="nav" onClick={(e) => this.nextLesson()} disabled={this.state.lesson === vocab.length - 1}>&#8250;</button>
+                    </h1>
+                    <h3>{this.state.list.length} mots</h3>
+                </div>
+
                 <div className="App-quizz">
                     <table><tbody>
                         <tr>
                             <td>
                                 <img src={frflag} className="App-flag" alt="frflag" />
                                 <div className="App-question">
-                                    <div>{this.state.current ? this.state.current[0] : ""}</div>
+                                    <span>{this.state.current ? this.state.current[0] : ""}</span>
                                 </div>
                             </td>
                             <td>
                                 <img src={ruflag} className="App-flag" alt="ruflag"/>
-                                <div className={this.getAnswerClass()}>{this.state.input}</div>
+                                <div className={this.getAnswerClass()}><span>{this.state.input}</span></div>
                             </td>
                         </tr>
                     </tbody></table>

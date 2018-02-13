@@ -31,27 +31,39 @@
   background-color: #fff;
   border: 1px solid #83beec;
   border-bottom: 4px solid #0078d7;
-  height: 50px;
-  width: 550px;
-  padding: 20px 20px 17px;
-  font-weight: normal;
-  font-family: "Segoe UI";
-  font-size: 40px;
-  color: #666;
-  white-space: nowrap;
-}
-
-.App-answer {
-  background-color: #f2f8fc;
-  border: 1px solid #83beec;
-  height: 50px;
+  height: 120px;
+  line-height: 120px;
+  text-align: center;
   width: 550px;
   padding: 20px;
   font-weight: normal;
   font-family: "Segoe UI";
   font-size: 40px;
   color: #666;
-  white-space: nowrap;
+}
+.App-question span {
+  display: inline-block;
+  vertical-align: middle;
+  line-height: normal;
+}
+
+.App-answer {
+  background-color: #f2f8fc;
+  border: 1px solid #83beec;
+  height: 120px;
+  line-height: 120px;
+  text-align: center;
+  width: 550px;
+  padding: 20px;
+  font-weight: normal;
+  font-family: "Segoe UI";
+  font-size: 40px;
+  color: #666;
+}
+.App-answer span {
+  display: inline-block;
+  vertical-align: middle;
+  line-height: normal;
 }
 
 .answer-success {
@@ -81,9 +93,6 @@
 }
 .App-log table th.word {
   width:100px;
-}
-.App-log table th.trials {
-  
 }
 
 .horizontal-stack {
@@ -128,3 +137,17 @@
 }
 
 
+button.nav {
+  border: none;
+  cursor: pointer;
+  background-color: #f1f1f1;
+  color: #666;
+  font-size: 40px;
+  padding: 0px 16px 4px 16px;
+  margin: 0px 30px;
+  border-radius: 10%;
+} 
+button.nav:hover {
+  background-color: #ccc;
+  color: black;
+}
